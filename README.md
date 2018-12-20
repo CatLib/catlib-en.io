@@ -2,7 +2,7 @@
 
 This is CatLib's documentation site.The document was built using [hexo](http://hexo.io/). Document content in the `source` folder, Written in Markdown format.
 
-Browse the online version of the [CatLib documentation](https://catlib.io): 
+Browse the online version of the [CatLib documentation](https://catlib.io).
 
 ## Environmental
 
