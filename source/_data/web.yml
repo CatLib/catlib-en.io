@@ -1,0 +1,23 @@
+navigation:
+  -
+    type: versions
+    mobile: true
+  -
+    type: icon
+    fontawesome: github
+    href: https://github.com/CatLib/Core
+    mobile: true
+
+tool:
+  editor: 
+    text: Edit
+    href: https://github.com/CatLib/catlib-en.io/tree/2.0/
+    external: true
+
+support:
+  label: 
+    - 'Didn't find what you need in the documentation?'
+    - 'Try searching in the search bar on the left, or {text}'
+  text: question in GitHub
+  href: https://github.com/CatLib/catlib-en.io/issues
+  external: true
