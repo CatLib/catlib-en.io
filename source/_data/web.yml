@@ -3,6 +3,9 @@ navigation:
     type: versions
     mobile: true
   -
+    type: text
+    text: 
+  -
     type: icon
     fontawesome: github
     href: https://github.com/CatLib/Core
@@ -16,7 +19,7 @@ tool:
 
 support:
   label:
-    - "Didn't find the document?"
+    - 'Not find want the document?'
     - 'Try searching in the search bar on the left, or {text}'
   text: question in GitHub
   href: https://github.com/CatLib/catlib-en.io/issues
