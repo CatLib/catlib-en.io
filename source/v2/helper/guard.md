@@ -1,16 +1,16 @@
 ---
-title: 守卫
+title: Guard
 ---
 
-# 守卫
+# Guard
 
-Guard允许您使用简单优雅的代码写出断言代码。守卫是可拓展的。
+Guard allows you to write assertion code in simple and elegant code. The guard is expandable.
 
-## 实用函数
+## Methods
 
 #### That
 
-通过**That**可以获取守卫实例，这样您可以使用扩展函数为守卫进行扩展。
+Guard instances can be obtained via **That**, so you can extend the Guard with the extension function.
 
 ```csharp
 var guard = Guard.That;
@@ -18,7 +18,7 @@ var guard = Guard.That;
 
 #### Requires
 
-验证条件并在条件失败时抛出异常。
+Validate the condition and throw an exception if the condition fails.
 
 ```csharp
 Guard.Requres<ArgumentNullException>(arg != null, $"Argument {nameof(arg)} cannot be null.");
@@ -26,15 +26,15 @@ Guard.Requres<ArgumentNullException>(arg != null, $"Argument {nameof(arg)} canno
 
 #### ParameterNotNull
 
-验证指定的参数不为空
+Verify that the specified parameter is not empty.
 
 ```csharp
 Guard.ParameterNotNull(arg, nameof(arg));
 ```
 
-## 扩展异常
+## Extend
 
-在进行守卫时，您可以扩展异常的构建方法，这样可以生成一些复杂的异常关系。
+When you are guarding, you can extend the exception's extend method so that you can generate some complex exception relationships.
 
 ```csharp
 Guard.Extend<ArgumentNullException>((message, innerException, state) =>
@@ -42,5 +42,3 @@ Guard.Extend<ArgumentNullException>((message, innerException, state) =>
     return new ArgumentNullException(message, innerException);
 })
 ```
-
-> 如果扩展返回`null`则会通过反射构建。

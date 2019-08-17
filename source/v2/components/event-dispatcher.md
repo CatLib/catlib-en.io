@@ -12,17 +12,17 @@ The event dispatcher is a good way to decouple applications. The CatLib event sy
 var dispatcher = new EventDispatcher();
 ```
 
-## Register listener
+## Add listener
 
 With the `AddListener` method you can register a listener for an event.
 
 ``` csharp
-dispatcher.AddListener("event.name", (EventArgs args) =>
+dispatcher.AddListener("event.name", (object sender, EventArgs args) =>
 {
 });
 ```
 
-## Dispatch event
+## Dispatch
 
 If you want to trigger an event, you can trigger the event with `Dispatch`. This method will dispatch the event to all of its registered listeners.
 
@@ -45,10 +45,7 @@ The CatLib event system supports implementing an `IStoppableEvent` interface to 
 ``` csharp
 public class FooEventArgs : EventArgs, IStoppableEvent
 {
-    public bool IsPropagationStopped()
-    {
-        return true;
-    }
+    public bool IsPropagationStopped => true;
 }
 ```
 

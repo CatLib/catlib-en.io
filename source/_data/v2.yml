@@ -51,33 +51,19 @@ navigation:
   -
     text: Helper
   -
-    text: 数组
+    text: Arr
     href: helper/arr.html
   -
-    text: 字符串
+    text: Str
     href: helper/str.html
   -
-    text: 守卫
+    text: Guard
     href: helper/guard.html
   -
-    text: 数据结构
+    text: Data Structure
   -
-    text: 有序集
+    text: Sort Set
     href: data-structure/sort-set.html
-  -
-    text: 流
-  -
-    text: 环型缓冲流
-    href: stream/ring-buffer-stream.html
-  -
-    text: 包装流
-    href: stream/wrapper-stream.html
-  -
-    text: 组合流
-    href: stream/combine-stream.html
-  -
-    text: 分片流
-    href: stream/segment-stream.html
   -
     divider : true
   -
