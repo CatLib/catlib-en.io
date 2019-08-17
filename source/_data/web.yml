@@ -5,7 +5,7 @@ navigation:
   -
     type: normal
     text: 中文文档
-    href: https://zh.catlib.io
+    href: https://zh.catlib.io/lasted/index.html
   -
     type: icon
     fontawesome: github
