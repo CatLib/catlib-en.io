@@ -1,8 +1,8 @@
 ---
-title: 有序集
+title: Sort Set
 ---
 
-# 有序集
+# About
 
 An ordered collection is also a collection of elements, like a collection, and does not allow duplicate members. The difference is that each element is associated with a score that can be sorted.
 
