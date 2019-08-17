@@ -3,8 +3,9 @@ navigation:
     type: versions
     mobile: true
   -
-    type: text
-    text: 
+    type: normal
+    text: 中文文档
+    href: https://zh.catlib.io
   -
     type: icon
     fontawesome: github
