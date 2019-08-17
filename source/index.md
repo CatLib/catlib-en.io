@@ -1,4 +1,4 @@
 ---
-title: 文档
+title: Document
 layout: index
 ---
