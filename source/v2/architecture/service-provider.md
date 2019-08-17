@@ -4,7 +4,7 @@ title: Service provider
 
 # Service provider
 
-The service provider is the bridge between the `component' and the `CatLib`. It is also the center of CatLib startup, and all services are defined by service providers.
+The service provider is the bridge between the `Component` and the `CatLib`. It is also the center of CatLib startup, and all services are defined by service providers.
 
 ## Architecture diagram
 
