@@ -15,8 +15,8 @@ tool:
     external: true
 
 support:
-  label: 
-    - 'Didn't find what you need in the documentation?'
+  label:
+    - "Didn't find the document?"
     - 'Try searching in the search bar on the left, or {text}'
   text: question in GitHub
   href: https://github.com/CatLib/catlib-en.io/issues
