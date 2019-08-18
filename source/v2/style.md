@@ -4,13 +4,13 @@ title: Code style
 
 # Code style
 
-This is CatLib's unique code style guide. If you use CatLib in your project, to avoid errors, reduce communication costs, small tangles and [anti-patterns] (https://en.wikipedia.org/wiki/Anti-pattern ), reading this guide is a good choice.
+This is CatLib's unique code style guide. If you use CatLib in your project, to avoid errors, reduce communication costs, small tangles and [anti-patterns](https://en.wikipedia.org/wiki/Anti-pattern ), reading this guide is a good choice.
 
 We can't guarantee that everything in the style guide is ideal for all projects and teams, so depending on the project environment, the surrounding technical environment, style deviations are feasible.
 
 We should follow the recommendations of this style guide as much as possible.
 
-According to the surrounding technology stack for naming conventions, we recommend that you read what Microsoft provides: [Framework Design Guide] (https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/index)
+According to the surrounding technology stack for naming conventions, we recommend that you read what Microsoft provides: [Framework Design Guide](https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/index)
 
 
 ## Priority definition
@@ -33,4 +33,4 @@ These rules can make the code difficult to maintain and even bugs. These rules l
 
 ## Rule
 
-> Code style rules have not been translated yet, please read the [Chinese version](https://zh.catlib.io)
+> Code style rules have not been translated yet, please read the [Chinese version](https://cn.catlib.io)
