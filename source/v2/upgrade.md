@@ -4,7 +4,7 @@ title: Upgrade
 
 # Upgrade
 
-> CatLib's version standard is: [Semver semantic version standard] (http://semver.org/lang/zh-CN/)
+> CatLib's version standard is: [Semver semantic version standard](http://semver.org/lang/zh-CN/)
 
 ## Summary
 
