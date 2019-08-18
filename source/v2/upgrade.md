@@ -84,4 +84,4 @@ Version format: `major.minor.revision.increment` rule is as follows:
 
 ## 1.x
 
-The minimum version of the English version is 2.0 so the migration does not exist in the English version. Learn [chinese version](https://zh.catlib.io).
+The minimum version of the English version is 2.0 so the migration does not exist in the English version. Learn [chinese version](https://cn.catlib.io).
