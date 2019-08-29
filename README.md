@@ -1,4 +1,4 @@
-# CatLib Documentation [![Build Status](https://www.travis-ci.org/CatLib/catlib-en.io.svg?branch=2.0)](https://www.travis-ci.org/CatLib/catlib-en.io)
+# CatLib Documentation [![Build Status](https://www.travis-ci.com/CatLib/catlib-en.io.svg?branch=2.0)](https://www.travis-ci.com/CatLib/catlib-en.io)
 
 This is CatLib's documentation site.The document was built using [hexo](http://hexo.io/). Document content in the `source` folder, Written in Markdown format.
 
