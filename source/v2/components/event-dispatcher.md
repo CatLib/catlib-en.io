@@ -22,12 +22,12 @@ dispatcher.AddListener("event.name", (object sender, EventArgs args) =>
 });
 ```
 
-## Dispatch
+## Raise
 
-If you want to trigger an event, you can trigger the event with `Dispatch`. This method will dispatch the event to all of its registered listeners.
+If you want to raise an event, you can raise the event with `Raise`. This method will raise the event to all of its registered listeners.
 
 ``` csharp
-dispatcher.Dispatch("event.name", eventArgs);
+dispatcher.Raise("event.name", eventArgs);
 ```
 
 ## Has listener
