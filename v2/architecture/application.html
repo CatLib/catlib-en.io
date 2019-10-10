@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="en">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="description" content>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1.0, user-scalable=0">
+
+    
+
+    
+
+    <!-- stylesheets -->
+    <link rel="stylesheet" href="/styles/cookbook.css">
+    <link rel="stylesheet" href="/styles/fontawesome.css">
+    
+      <link rel="stylesheet" href="/styles/gitment.css">
+    
+
+    <!-- favicon -->
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    
+
+    
+
+    
+
+    <title>CatLib - Application </title>
+  </head>
+
+  <body>
+    
+    
+    <div id="cookbook" :class="{'with-summary' : withSummary}" v-cloak>
+    <div class="cookbook-summary">
+    
+    <search placeholder="Type to search" :versions="versions" :root="root" v-model="searched" v-on:submit="searchSubmit" :disable="searchDisabled" v-on:disabled="setSearchDisabled"></search>
+    <navigation :data="navigation" :web="web" :versions="versions" :root="root" active="v2/architecture/application.html" :subnavdata="contentNavigation" :value="contentOffset" :searchdisabled="searchDisabled"></navigation>
+    
+</div>    <div class="cookbook-content" ref="content">
+    
+    <div class="cookbook-header" role="navigation">
+        <header-tool :web="web" path="v2/architecture/application.html" editor v-model="withSummary"></header-tool>
+        <header-navigation :web="web" :versions="versions" :root="root"></header-navigation>
+    </div>
+    <div class="content-wrapper" @click="hidenSummary" :style="minHeightStyle">
+        <checkout :navigation="navigation" :web="web" :versions="versions" v-model="checkout"></checkout>
+        <div v-if="checkout" class="cookbook-search-results">
+            <div id="search-noresults" v-show="searched == null">
+                <section ref="section" class="markdown-section">
+                    <h1 id="Application"><a href="#Application" class="headerlink" title="Application"></a>Application</h1><p><code>Application</code> is the core of the CatLib program and is the entry class for the program.</p>
+<p>The application loads the service provider and other necessary resources through the boot. In general, an application is only recommended to new one and can only be started in the main thread.</p>
+<h2 id="Startup-process"><a href="#Startup-process" class="headerlink" title="Startup process"></a>Startup process</h2><p><code>Bootstrap</code> -&gt; <code>Init</code></p>
+<ul>
+<li><strong>Bootstrap</strong>: Often used to boot the service provider, initial configuration, or some other resource.</li>
+<li><strong>Init</strong>: Call <code>Init</code> method of all service providers and complete the framework startup. initialization.</li>
+</ul>
+<h2 id="The-life-cycle"><a href="#The-life-cycle" class="headerlink" title="The life cycle"></a>The life cycle</h2><div style="padding-left:10%"><img src="../imgs/life-cycle.svg" alt="life-cycle" style="max-width:1000px;"></div>
+
+<h2 id="Create-new-instance"><a href="#Create-new-instance" class="headerlink" title="Create new instance."></a>Create new instance.</h2><ul>
+<li><p>Create a frame instance with <code>Application.New</code></p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> app = Application.New();</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Create a frame instance by manually instantiating</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> app = <span class="keyword">new</span> Application();</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="Bootstrap"><a href="#Bootstrap" class="headerlink" title="Bootstrap"></a>Bootstrap</h2><p>The bootloader must implement the <code>IBootstrap</code> insterface. The bootstrap can be used to guide the registration service provider, or other programs that need to be loaded before the framework is started.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">BootstrapFoo</span> : <span class="title">IBootstrap</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Bootstrap</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Console.WriteLine(<span class="string">"booting."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.Bootstrap(<span class="keyword">new</span> BootstrapFoo()); <span class="comment">// booting.</span></span><br></pre></td></tr></table></figure>
+<h2 id="Register"><a href="#Register" class="headerlink" title="Register"></a>Register</h2><p>The service provider can be registered to the application via the <code>Register</code> method. The service provider must implement the <code>IServiceProvider</code> interface.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">ProviderFoo</span> : <span class="title">IServiceProvider</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Init</span>(<span class="params"></span>)</span>&#123; &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Register</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Console.WriteLine(<span class="string">"register."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.Register(<span class="keyword">new</span> ProviderFoo()); <span class="comment">// register.</span></span><br></pre></td></tr></table></figure>
+<h2 id="Init"><a href="#Init" class="headerlink" title="Init"></a>Init</h2><p>Calling the <code>Init</code> method will initialize the framework. And invoke the <code>Init</code> method in the service provider in order of registration.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">ProviderFoo</span> : <span class="title">IServiceProvider</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Init</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123; </span><br><span class="line">        Console.WriteLine(<span class="string">"init foo"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Register</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Console.WriteLine(<span class="string">"register foo"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">ProviderBar</span> : <span class="title">IServiceProvider</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Init</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123; </span><br><span class="line">        Console.WriteLine(<span class="string">"init bar"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Register</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Console.WriteLine(<span class="string">"register bar"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">app.Register(<span class="keyword">new</span> ProviderBar()); <span class="comment">// register bar</span></span><br><span class="line">app.Register(<span class="keyword">new</span> ProviderFoo()); <span class="comment">// register foo</span></span><br><span class="line"></span><br><span class="line">app.Init();                      <span class="comment">// init bar</span></span><br><span class="line">                                 <span class="comment">// init foo</span></span><br></pre></td></tr></table></figure>
+<h2 id="Terminate"><a href="#Terminate" class="headerlink" title="Terminate"></a>Terminate</h2><p>When the program exits, you need to call the <code>Terminate</code> method to terminate the framework. Services registered in this framework will be released in an orderly manner. For the release order, please refer to [Lifecycle] (#Lifecycle).</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.Terminate();</span><br></pre></td></tr></table></figure>
+<h2 id="Events"><a href="#Events" class="headerlink" title="Events"></a>Events</h2><p>The following events are embedded in the application and are automatically triggered when the condition is met. The event names are placed in <code>ApplicationEvents</code>.</p>
+<p>For the simple event system, please refer to: [Event System] (../components/event.html) for detailed documentation.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> dispatcher = app.Make&lt;IEventDispatcher&gt;();</span><br><span class="line">dispatcher.AddListener(ApplicationEvents.OnStartCompleted, (obj) =&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">var</span> eventArgs = (StartCompletedEventArgs)obj;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Event name</th>
+<th style="text-align:center">Payload</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><code>OnBeforeBoot</code></td>
+<td style="text-align:center"><code>BeforeBootEventArgs</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>OnBooting</code></td>
+<td style="text-align:center"><code>BootingEventArgs</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>OnAfterBoot</code></td>
+<td style="text-align:center"><code>AfterBootEventArgs</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>OnRegisterProvider</code></td>
+<td style="text-align:center"><code>RegisterProviderEventArgs</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>OnBeforeInit</code></td>
+<td style="text-align:center"><code>BeforeInitEventArgs</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>OnInitProvider</code></td>
+<td style="text-align:center"><code>InitProviderEventArgs</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>OnAfterInit</code></td>
+<td style="text-align:center"><code>AfterInitEventArgs</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>OnStartCompleted</code></td>
+<td style="text-align:center"><code>StartCompletedEventArgs</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>OnBeforeTerminate</code></td>
+<td style="text-align:center"><code>BeforeTerminateEventArgs</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>OnAfterTerminate</code></td>
+<td style="text-align:center"><code>AfterTerminateEventArgs</code></td>
+</tr>
+</tbody>
+</table>
+<h1 id="OnNewApplication"><a href="#OnNewApplication" class="headerlink" title="OnNewApplication"></a>OnNewApplication</h1><p>With <code>App.OnNewApplication</code> you can capture Application creation events, which are useful for programs that have been executed before the Application was created or for programs that need to listen for application changes.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">App.OnNewApplication += (app) =&gt;</span><br><span class="line">&#123;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="DebugLevel"><a href="#DebugLevel" class="headerlink" title="DebugLevel"></a>DebugLevel</h2><p>You can set the debug level of the framework with <code>DebugLevel</code>, and all components can recognize this debug level to make the corresponding processing. By default, the debug level of the framework is <strong>Production</strong>.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.DebugLevel = DebugLevels.Production;</span><br></pre></td></tr></table></figure>
+<h2 id="Get-runtime-unique-id"><a href="#Get-runtime-unique-id" class="headerlink" title="Get runtime unique id"></a>Get runtime unique id</h2><p>During the application lifecycle, you can use the <code>GetRuntimeId</code> method to get a unique Id at runtime, which is multithread safe.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> rid = app.GetRuntimeId();</span><br></pre></td></tr></table></figure>
+<h2 id="IsRegistered"><a href="#IsRegistered" class="headerlink" title="IsRegistered"></a>IsRegistered</h2><p>You can determine if the service provider has been registered to the application via <code>IsRegistered</code>.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.IsRegistered(provider);</span><br></pre></td></tr></table></figure>
+<h2 id="IsMainThread"><a href="#IsMainThread" class="headerlink" title="IsMainThread"></a>IsMainThread</h2><p>You can use <code>IsMainThread</code> to determine if it is in the main thread (The thread that created the application will be considered the main thread).</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.IsMainThread;</span><br></pre></td></tr></table></figure>
+<h2 id="Version"><a href="#Version" class="headerlink" title="Version"></a>Version</h2><p>The version of the framework can be obtained via <code>Version</code>, see more [semantic version] (<a href="https://semver.org/" target="_blank" rel="noopener">https://semver.org/</a>)</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.Version;</span><br></pre></td></tr></table></figure>
+                </section>
+
+                
+                    <div ref="comments" id="gitment-container"></div>
+                
+                
+                <support :web="web" visiable></support>
+            </div>
+            <div v-if="searched != null" id="search-result" class="search-result" v-cloak>
+                <p v-if="searched.results.length > 0" class="search-title">
+                    与"{{ searched.keyword }}"相关的内容{{searched.results.length}}条
+                </p>
+                <p v-else class="search-title">无搜索结果可以匹配"{{ searched.keyword }}"</p>
+                <div v-for="(record) in searched.results" class="searched-line">
+                    <h3>
+                        <a :href="'/' + record.href + '#!' + encodeURI(anchorEscaping(record.hash))" @click="clearSearch">
+                            {{ record.hash }}
+                        </a>
+                    </h3>
+                    <ul>
+                        <li><i>{{ record.page }} <span v-if="record.page_title != ''">- {{ record.page_title }}</span></i> <i>score:<span>{{ record.score }}</span></i></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div></div>
+
+<script>
+window.onload = function(){  
+    new Vue({
+        el : '#cookbook',
+        data: { 
+            navigation : {"navigation":[{"levels":[{"text":"CatLib","href":"/"},{"text":"Core","href":"index.html"}]},{"divider":true},{"text":"Getting Started"},{"text":"Introduction","href":"index.html"},{"text":"Code style","href":"style.html"},{"text":"FAQ","href":"faq.html"},{"text":"Contribution","href":"contribution.html"},{"text":"Upgrade","href":"upgrade.html"},{"text":"Migration","href":"migration.html"},{"text":"Architecture"},{"text":"Service Provider","href":"architecture/service-provider.html"},{"text":"Application","href":"architecture/application.html"},{"text":"Container","href":"architecture/container.html"},{"text":"Facade","href":"architecture/facade.html"},{"text":"Components"},{"text":"Event Dispatcher","href":"components/event-dispatcher.html"},{"text":"Helper"},{"text":"Arr","href":"helper/arr.html"},{"text":"Str","href":"helper/str.html"},{"text":"Guard","href":"helper/guard.html"},{"text":"Data Structure"},{"text":"Sort Set","href":"data-structure/sort-set.html"},{"divider":true},{"text":"Power by CatLib","href":"https://github.com/CatLib","external":true}]},
+            web : {"navigation":[{"type":"versions","mobile":true},{"type":"normal","text":"中文文档","href":"https://cn.catlib.io/lasted/index.html"},{"type":"icon","fontawesome":"github","href":"https://github.com/CatLib/Core","mobile":true}],"tool":{"editor":{"text":"Edit","href":"https://github.com/CatLib/catlib-en.io/tree/2.0/","external":true}},"support":{"label":["Not find want the document?","Try searching in the search bar on the left, or {text}"],"text":"question in GitHub","href":"https://github.com/CatLib/catlib-en.io/issues","external":true}},
+            versions: {
+                current :  {"test":"^v2\\/","name":"v2.0","active":"Latest(v2.0)","data":"v2"},
+                list: [{"test":"^v2\\/","name":"v2.0","active":"Latest(v2.0)","data":"v2"}]
+            },
+            withSummary : true,
+            isPC : null,
+            checkout: false,
+            root: "/",
+            contentNavigation: [],
+            contentOffset : { 'offsetTop' : 0, 'height' : 0 },
+            searched: null,
+            searchDisabled: localStorage.getItem("search-input-disabled") == 'true',
+            clientHeight : 0
+        },
+        methods :{
+            testPC : function(){ 
+                var userAgentInfo = navigator.userAgent;
+                var deviceReg = [
+                    /(MI(\s+)|2013022|2013023|HM|2014011|2014501|2014813|2014811|2014812|2014817|2014818|2014819|2014502|2015|xiaomi).*/i,
+                    /(MI(.*|\s*)PAD).*/i,
+                    /(iPhone | iPod).*/i,
+                    /(iPad).*/i,
+                    /(Android).*/i,
+                    /(iPhone|iPad|iPod|iOS).*/i,
+                    /(windows(.*|\s*)phone).*/i
+                ];
+                var flag = true;
+                for (var v = 0; v < deviceReg.length; v++) {
+                    if (deviceReg[v].test(userAgentInfo)) {
+                        flag = false;
+                        break;
+                    }
+                }
+                
+                return flag;
+            },
+            hidenSummary : function(){
+                if(!this.isPC)
+                {
+                    this.withSummary = false;
+                }
+            },
+            bindMinHeight: function(){
+                var vue = this;
+                window.addEventListener("resize", function(){
+                    vue.clientHeight = document.documentElement.clientHeight - 50;
+                }, false);
+                this.clientHeight = document.documentElement.clientHeight - 50;
+            },
+            bindAnchor : function(){
+                if(this.$refs.section == undefined){
+                    return;
+                }
+                window.addEventListener("hashchange", this.hashChange, false);
+                window.addEventListener("resize", this.refreshContentNavigation, false);
+                var elements = this.$refs.section.getElementsByTagName("a");
+                var vue = this;
+                for(var index = 0; index < elements.length; index++){
+                    let element = elements[index];
+                    let href = element.getAttribute("href");
+                    if(href.length <= 0 || href[0] != "#"){
+                        continue;
+                    }
+
+                    element.addEventListener('click', function(event){
+                        location.hash = "!" + encodeURI(decodeURI(vue.anchorEscaping(element.hash.substring(1))));
+                        event.preventDefault();
+                    }, false);
+                }
+
+                this.refreshContentNavigation();
+            },
+            refreshContentNavigation : function(){
+                if(this.$refs.section == undefined || !this.supportSubnav()){
+                    return;
+                }
+                var subnavIndex = 0;
+                var elements = this.$refs.section.getElementsByClassName("headerlink");
+                var subnav = [];
+                for(var index=0; index < elements.length; index++){
+                    var element = elements[index];
+                    if(element.parentElement.nodeName == "H2"){
+                        subnav[subnavIndex++] = {'text' : element.title , 'hash' : "!" + element.hash.substring(1), 'offsetTop' : element.offsetTop};
+                    }
+                }
+                this.contentNavigation = subnav;
+            },
+            hashChange : function(){
+                var locationHash = location.hash.replace(/^#!/ig, "#");
+                if(locationHash == ''){
+                    return;
+                }
+                locationHash = decodeURI(locationHash);
+                var hashes = this.$refs.section.getElementsByClassName("headerlink");
+                var target = null;
+                for(var index=0; index < hashes.length; index++){
+                    var hash = hashes[index];
+                    if(decodeURI(hash.hash) == locationHash){
+                        target = hash;
+                        break;
+                    }
+                }
+                
+                if(target == null){
+                    return;
+                }
+
+                var top = target.offsetTop - 20; 
+                
+                if(top > 0)
+                {
+                    var vue = this;
+                    $('.cookbook-content').animate({scrollTop:top}, 500, function(){
+                        if(!vue.isPC){
+                            vue.withSummary = false;
+                        }
+                    });
+                }        
+            },
+            bindScroll : function(){
+                if(!this.supportSubnav()){
+                    return;
+                }
+                this.$refs.content.addEventListener("scroll", this.scrollChange, false);
+            },
+            scrollChange : function(e){
+                this.contentOffset = { 
+                    'offsetTop' : this.$refs.content.scrollTop,
+                    'height' : this.$refs.content.scrollHeight - this.$refs.content.offsetHeight
+                };
+            },
+            supportSubnav : function(){
+                if(this.navigation.subnav != undefined && this.navigation.subnav == false){
+                    return false;
+                }
+                return true;
+            },
+            clearSearch: function(){
+                this.searched = null;
+                this.$nextTick(function(){
+                    this.hashChange();
+                });
+            },
+            searchSubmit: function(){
+                if(!this.isPC)
+                {
+                    this.withSummary = false;
+                }
+            },
+            anchorEscaping : function(str){
+                return str.replace(' ', '-').replace('.', '-');
+            },
+            setSearchDisabled : function(value){
+                this.searchDisabled = value;
+            },
+            initComments : function(){
+                
+                    var vue = this;
+                    var theme = {
+                        render : function(state, instance) {
+                            var container = document.createElement('div');
+                            container.lang = "en-US";
+                            container.className = 'gitment-container gitment-root-container';
+                            container.appendChild(instance.renderHeader(state, instance));
+                            container.appendChild(instance.renderComments(state, instance));
+                            container.appendChild(instance.renderEditor(state, instance));
+                            return container;
+                        },
+                    }
+
+                    var gitment = new Gitment({
+                        id : 'catlib-en:v2/architecture/application.html',
+                        owner: 'catlib',
+                        repo: 'catlib-en.io',
+                        oauth: {
+                            client_id: '3620f7cdd1c50b4b6e3c',
+                            client_secret: '50664006a799cb29b27e8358b88a6a4580e8dc0c',
+                            cross_server: 'https://31225080.ap-southeast-1.fc.aliyuncs.com/2016-08-15/proxy/gitment/gitment-cross/',
+                        },
+                        labels : [
+                            'CatLib'
+                        ],
+                        link: 'https://catlib.io/v2/architecture/application.html',
+                        maintainer: ["yb199478"],
+                        theme : theme,
+                        perPage : 30,
+                    });
+
+                    gitment.render(this.$refs.comments);
+                
+            },
+        },mounted : function() {
+            this.isPC = this.withSummary = this.testPC();
+            this.$nextTick(function(){
+                this.bindScroll();
+                this.bindAnchor();
+                this.hashChange();
+                this.initComments();
+                this.bindMinHeight();
+            });
+        },
+        watch: {
+            searched : function(){
+                $('.cookbook-content').animate({scrollTop:0}, 0);
+            }
+        },
+        computed:{
+            minHeightStyle : function()
+            {
+                return { 'min-height' : this.clientHeight + "px" }
+            }
+        }
+    });
+};
+</script>
+    
+
+    
+    <script src="/scripts/cookbook.js"></script>
+    
+      <script src="/scripts/gitment.js"></script>
+    
+    
+    
+  </body>
+</html>

@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="description" content>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1.0, user-scalable=0">
+
+    
+
+    
+
+    <!-- stylesheets -->
+    <link rel="stylesheet" href="/styles/cookbook.css">
+    <link rel="stylesheet" href="/styles/fontawesome.css">
+    
+      <link rel="stylesheet" href="/styles/gitment.css">
+    
+
+    <!-- favicon -->
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    
+
+    
+
+    
+
+    <title>CatLib - Str </title>
+  </head>
+
+  <body>
+    
+    
+    <div id="cookbook" :class="{'with-summary' : withSummary}" v-cloak>
+    <div class="cookbook-summary">
+    
+    <search placeholder="Type to search" :versions="versions" :root="root" v-model="searched" v-on:submit="searchSubmit" :disable="searchDisabled" v-on:disabled="setSearchDisabled"></search>
+    <navigation :data="navigation" :web="web" :versions="versions" :root="root" active="v2/helper/str.html" :subnavdata="contentNavigation" :value="contentOffset" :searchdisabled="searchDisabled"></navigation>
+    
+</div>    <div class="cookbook-content" ref="content">
+    
+    <div class="cookbook-header" role="navigation">
+        <header-tool :web="web" path="v2/helper/str.html" editor v-model="withSummary"></header-tool>
+        <header-navigation :web="web" :versions="versions" :root="root"></header-navigation>
+    </div>
+    <div class="content-wrapper" @click="hidenSummary" :style="minHeightStyle">
+        <checkout :navigation="navigation" :web="web" :versions="versions" v-model="checkout"></checkout>
+        <div v-if="checkout" class="cookbook-search-results">
+            <div id="search-noresults" v-show="searched == null">
+                <section ref="section" class="markdown-section">
+                    <h1 id="Str"><a href="#Str" class="headerlink" title="Str"></a>Str</h1><p>Str helper extends some common operations for string.</p>
+<h2 id="Method"><a href="#Method" class="headerlink" title="Method"></a>Method</h2><p>Extract the legal function name expressed by the string.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Str.Method(<span class="string">"Function"</span>);                       <span class="comment">// Function</span></span><br><span class="line">Str.Method(<span class="string">"ClassName.Function"</span>);             <span class="comment">// Function</span></span><br><span class="line">Str.Method(<span class="string">"ClassName.Function@NewFunction"</span>); <span class="comment">// NewFunction</span></span><br><span class="line">Str.Method(<span class="string">"ClassName.Function@#$%^^&amp;*"</span>);     <span class="comment">// Function</span></span><br></pre></td></tr></table></figure>
+<h2 id="Is"><a href="#Is" class="headerlink" title="Is"></a>Is</h2><p>Determines whether the specified string matches the matching expression. Matching expressions only allow the use of the asterisk <code>*</code> wildcard (ie, remove all functions except the asterisk in the regular expression)</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Str.Is(<span class="string">"fo*ar"</span> , <span class="string">"foobar"</span>); </span><br><span class="line"><span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+<h2 id="AsteriskWildcard"><a href="#AsteriskWildcard" class="headerlink" title="AsteriskWildcard"></a>AsteriskWildcard</h2><p>Translates the specified string into an asterisk match expression. (ie, remove all functions except the asterisk in the regular expression)</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Str.AsteriskWildcard(<span class="string">"[foo]b*r"</span>);</span><br><span class="line"><span class="comment">// "\[foo\]b*r"</span></span><br></pre></td></tr></table></figure>
+<h2 id="Split"><a href="#Split" class="headerlink" title="Split"></a>Split</h2><p>Splits the string into an array based on length, and the last element may be less than the required length.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Str.Split(<span class="string">"foobara"</span> , <span class="number">2</span>);</span><br><span class="line"><span class="comment">// ["fo", "ob", "ar", "a"]</span></span><br></pre></td></tr></table></figure>
+<h2 id="Repeat"><a href="#Repeat" class="headerlink" title="Repeat"></a>Repeat</h2><p>将字符串重复指定的次数。Repeat the specified number of times the string.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Str.Repeat(<span class="string">"foo"</span> , <span class="number">3</span>);</span><br><span class="line"><span class="comment">// foofoofoo</span></span><br></pre></td></tr></table></figure>
+<h2 id="Shuffle"><a href="#Shuffle" class="headerlink" title="Shuffle"></a>Shuffle</h2><p>Shuffle all characters in the string.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Str.Shuffle(<span class="string">"foobar"</span>);</span><br></pre></td></tr></table></figure>
+<h2 id="SubstringCount"><a href="#SubstringCount" class="headerlink" title="SubstringCount"></a>SubstringCount</h2><p>Calculate the number of times a substring appears in a string.</p>
+<p>This function does not count overlapping substrings.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Str.SubstringCount(<span class="string">"abcabcab"</span>,<span class="string">"abcab"</span>);</span><br><span class="line"><span class="comment">// result : 1</span></span><br></pre></td></tr></table></figure>
+<h2 id="Reverse"><a href="#Reverse" class="headerlink" title="Reverse"></a>Reverse</h2><p>Reverse specified string.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Str.Reverse(<span class="string">"foobar"</span>);</span><br><span class="line"><span class="comment">// raboof</span></span><br></pre></td></tr></table></figure>
+<h2 id="Pad"><a href="#Pad" class="headerlink" title="Pad"></a>Pad</h2><p>Fill the string with the new length.</p>
+<p>If the fill length is less than the original length of the string, no action is taken.</p>
+<p>Fill both sides of the string. If it is not even, the right side gets extra padding.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Str.Pad(<span class="string">"foo"</span>, <span class="number">10</span>, <span class="string">"bar"</span>, PadTypes.Both);</span><br><span class="line"><span class="comment">// barfoobarb</span></span><br></pre></td></tr></table></figure>
+<h2 id="After"><a href="#After" class="headerlink" title="After"></a>After</h2><p>Finds the specified value in the string and returns the rest.</p>
+<p>If not found, return the specified string itself.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Str.After(<span class="string">"foobar"</span>,<span class="string">"oo"</span>);</span><br><span class="line"><span class="comment">// bar</span></span><br></pre></td></tr></table></figure>
+<h2 id="Contains"><a href="#Contains" class="headerlink" title="Contains"></a>Contains</h2><p>Determine whether the specified string contains the specified substring. Substrings are case sensitive.</p>
+<p>Match any element if the condition is an array.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Str.Contains(<span class="string">"helloworld"</span>,<span class="string">"llo"</span>);</span><br><span class="line"><span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+<h2 id="Replace"><a href="#Replace" class="headerlink" title="Replace"></a>Replace</h2><p>Replace the match in the specified string. This function is case sensitive.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Str.Replace(<span class="keyword">new</span> []&#123; <span class="string">"oo"</span>, <span class="string">"ar"</span> &#125;, <span class="string">"**"</span>, <span class="string">"foobar"</span>);</span><br><span class="line"><span class="comment">// f**b**</span></span><br></pre></td></tr></table></figure>
+<h2 id="ReplaceFirst"><a href="#ReplaceFirst" class="headerlink" title="ReplaceFirst"></a>ReplaceFirst</h2><p>Replace the first occurrence of a match in the specified string. This function is case sensitive.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Str.ReplaceFirst(<span class="string">"foo"</span>,<span class="string">"***"</span>,<span class="string">"foobarfoobar"</span>);</span><br><span class="line"><span class="comment">// ***barfoobar</span></span><br></pre></td></tr></table></figure>
+<h2 id="ReplaceLast"><a href="#ReplaceLast" class="headerlink" title="ReplaceLast"></a>ReplaceLast</h2><p>Replaces the first occurrence of a match in the specified string from the back to the front. This function is case sensitive.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Str.ReplaceLast(<span class="string">"foo"</span>,<span class="string">"***"</span>,<span class="string">"foobarfoobar"</span>);</span><br><span class="line"><span class="comment">// foobar***bar</span></span><br></pre></td></tr></table></figure>
+<h3 id="Random"><a href="#Random" class="headerlink" title="Random"></a>Random</h3><p>Generate a random letter (with case), a string of numbers.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Str.Random(<span class="number">8</span>);</span><br><span class="line"><span class="comment">// A random value maybe：u8Kn1YUz</span></span><br></pre></td></tr></table></figure>
+<h2 id="Trancate"><a href="#Trancate" class="headerlink" title="Trancate"></a>Trancate</h2><p>If the length exceeds the given maximum string length, the string is truncated. The last character of the truncated string will be replaced with the mission string.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Str.Trancate(<span class="string">"foobarfoobar"</span>, <span class="number">6</span>);</span><br><span class="line"><span class="comment">// foo...</span></span><br></pre></td></tr></table></figure>
+<h2 id="JoinList"><a href="#JoinList" class="headerlink" title="JoinList"></a>JoinList</h2><p>Returns all sequential combination of the given array.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Str.JoinList(<span class="keyword">new</span> [] &#123; <span class="string">"hello"</span>, <span class="string">"world"</span> &#125;, <span class="string">"/"</span>); </span><br><span class="line"><span class="comment">// [0] == "hello";</span></span><br><span class="line"><span class="comment">// [1] == "hello/world";</span></span><br></pre></td></tr></table></figure>
+<h2 id="Levenshtein"><a href="#Levenshtein" class="headerlink" title="Levenshtein"></a>Levenshtein</h2><p>Calculate Levenshtein distance between two strings.</p>
+<blockquote>
+<p><a href="https://en.wikipedia.org/wiki/Levenshtein_distance" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Levenshtein_distance</a></p>
+</blockquote>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Str.Levenshtein(<span class="string">"hello"</span>, <span class="string">"world"</span>); <span class="comment">// 4</span></span><br><span class="line">Str.Levenshtein(<span class="string">"hello"</span>, <span class="string">"catlib"</span>); <span class="comment">// 5</span></span><br><span class="line">Str.Levenshtein(<span class="string">"hello"</span>, <span class="string">"catlib-world"</span>); <span class="comment">// 10</span></span><br></pre></td></tr></table></figure>
+<h2 id="Space"><a href="#Space" class="headerlink" title="Space"></a>Space</h2><p>Represents an empty string with spaces.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Str.Space; </span><br><span class="line"><span class="comment">// " "</span></span><br></pre></td></tr></table></figure>
+                </section>
+
+                
+                    <div ref="comments" id="gitment-container"></div>
+                
+                
+                <support :web="web" visiable></support>
+            </div>
+            <div v-if="searched != null" id="search-result" class="search-result" v-cloak>
+                <p v-if="searched.results.length > 0" class="search-title">
+                    与"{{ searched.keyword }}"相关的内容{{searched.results.length}}条
+                </p>
+                <p v-else class="search-title">无搜索结果可以匹配"{{ searched.keyword }}"</p>
+                <div v-for="(record) in searched.results" class="searched-line">
+                    <h3>
+                        <a :href="'/' + record.href + '#!' + encodeURI(anchorEscaping(record.hash))" @click="clearSearch">
+                            {{ record.hash }}
+                        </a>
+                    </h3>
+                    <ul>
+                        <li><i>{{ record.page }} <span v-if="record.page_title != ''">- {{ record.page_title }}</span></i> <i>score:<span>{{ record.score }}</span></i></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div></div>
+
+<script>
+window.onload = function(){  
+    new Vue({
+        el : '#cookbook',
+        data: { 
+            navigation : {"navigation":[{"levels":[{"text":"CatLib","href":"/"},{"text":"Core","href":"index.html"}]},{"divider":true},{"text":"Getting Started"},{"text":"Introduction","href":"index.html"},{"text":"Code style","href":"style.html"},{"text":"FAQ","href":"faq.html"},{"text":"Contribution","href":"contribution.html"},{"text":"Upgrade","href":"upgrade.html"},{"text":"Migration","href":"migration.html"},{"text":"Architecture"},{"text":"Service Provider","href":"architecture/service-provider.html"},{"text":"Application","href":"architecture/application.html"},{"text":"Container","href":"architecture/container.html"},{"text":"Facade","href":"architecture/facade.html"},{"text":"Components"},{"text":"Event Dispatcher","href":"components/event-dispatcher.html"},{"text":"Helper"},{"text":"Arr","href":"helper/arr.html"},{"text":"Str","href":"helper/str.html"},{"text":"Guard","href":"helper/guard.html"},{"text":"Data Structure"},{"text":"Sort Set","href":"data-structure/sort-set.html"},{"divider":true},{"text":"Power by CatLib","href":"https://github.com/CatLib","external":true}]},
+            web : {"navigation":[{"type":"versions","mobile":true},{"type":"normal","text":"中文文档","href":"https://cn.catlib.io/lasted/index.html"},{"type":"icon","fontawesome":"github","href":"https://github.com/CatLib/Core","mobile":true}],"tool":{"editor":{"text":"Edit","href":"https://github.com/CatLib/catlib-en.io/tree/2.0/","external":true}},"support":{"label":["Not find want the document?","Try searching in the search bar on the left, or {text}"],"text":"question in GitHub","href":"https://github.com/CatLib/catlib-en.io/issues","external":true}},
+            versions: {
+                current :  {"test":"^v2\\/","name":"v2.0","active":"Latest(v2.0)","data":"v2"},
+                list: [{"test":"^v2\\/","name":"v2.0","active":"Latest(v2.0)","data":"v2"}]
+            },
+            withSummary : true,
+            isPC : null,
+            checkout: false,
+            root: "/",
+            contentNavigation: [],
+            contentOffset : { 'offsetTop' : 0, 'height' : 0 },
+            searched: null,
+            searchDisabled: localStorage.getItem("search-input-disabled") == 'true',
+            clientHeight : 0
+        },
+        methods :{
+            testPC : function(){ 
+                var userAgentInfo = navigator.userAgent;
+                var deviceReg = [
+                    /(MI(\s+)|2013022|2013023|HM|2014011|2014501|2014813|2014811|2014812|2014817|2014818|2014819|2014502|2015|xiaomi).*/i,
+                    /(MI(.*|\s*)PAD).*/i,
+                    /(iPhone | iPod).*/i,
+                    /(iPad).*/i,
+                    /(Android).*/i,
+                    /(iPhone|iPad|iPod|iOS).*/i,
+                    /(windows(.*|\s*)phone).*/i
+                ];
+                var flag = true;
+                for (var v = 0; v < deviceReg.length; v++) {
+                    if (deviceReg[v].test(userAgentInfo)) {
+                        flag = false;
+                        break;
+                    }
+                }
+                
+                return flag;
+            },
+            hidenSummary : function(){
+                if(!this.isPC)
+                {
+                    this.withSummary = false;
+                }
+            },
+            bindMinHeight: function(){
+                var vue = this;
+                window.addEventListener("resize", function(){
+                    vue.clientHeight = document.documentElement.clientHeight - 50;
+                }, false);
+                this.clientHeight = document.documentElement.clientHeight - 50;
+            },
+            bindAnchor : function(){
+                if(this.$refs.section == undefined){
+                    return;
+                }
+                window.addEventListener("hashchange", this.hashChange, false);
+                window.addEventListener("resize", this.refreshContentNavigation, false);
+                var elements = this.$refs.section.getElementsByTagName("a");
+                var vue = this;
+                for(var index = 0; index < elements.length; index++){
+                    let element = elements[index];
+                    let href = element.getAttribute("href");
+                    if(href.length <= 0 || href[0] != "#"){
+                        continue;
+                    }
+
+                    element.addEventListener('click', function(event){
+                        location.hash = "!" + encodeURI(decodeURI(vue.anchorEscaping(element.hash.substring(1))));
+                        event.preventDefault();
+                    }, false);
+                }
+
+                this.refreshContentNavigation();
+            },
+            refreshContentNavigation : function(){
+                if(this.$refs.section == undefined || !this.supportSubnav()){
+                    return;
+                }
+                var subnavIndex = 0;
+                var elements = this.$refs.section.getElementsByClassName("headerlink");
+                var subnav = [];
+                for(var index=0; index < elements.length; index++){
+                    var element = elements[index];
+                    if(element.parentElement.nodeName == "H2"){
+                        subnav[subnavIndex++] = {'text' : element.title , 'hash' : "!" + element.hash.substring(1), 'offsetTop' : element.offsetTop};
+                    }
+                }
+                this.contentNavigation = subnav;
+            },
+            hashChange : function(){
+                var locationHash = location.hash.replace(/^#!/ig, "#");
+                if(locationHash == ''){
+                    return;
+                }
+                locationHash = decodeURI(locationHash);
+                var hashes = this.$refs.section.getElementsByClassName("headerlink");
+                var target = null;
+                for(var index=0; index < hashes.length; index++){
+                    var hash = hashes[index];
+                    if(decodeURI(hash.hash) == locationHash){
+                        target = hash;
+                        break;
+                    }
+                }
+                
+                if(target == null){
+                    return;
+                }
+
+                var top = target.offsetTop - 20; 
+                
+                if(top > 0)
+                {
+                    var vue = this;
+                    $('.cookbook-content').animate({scrollTop:top}, 500, function(){
+                        if(!vue.isPC){
+                            vue.withSummary = false;
+                        }
+                    });
+                }        
+            },
+            bindScroll : function(){
+                if(!this.supportSubnav()){
+                    return;
+                }
+                this.$refs.content.addEventListener("scroll", this.scrollChange, false);
+            },
+            scrollChange : function(e){
+                this.contentOffset = { 
+                    'offsetTop' : this.$refs.content.scrollTop,
+                    'height' : this.$refs.content.scrollHeight - this.$refs.content.offsetHeight
+                };
+            },
+            supportSubnav : function(){
+                if(this.navigation.subnav != undefined && this.navigation.subnav == false){
+                    return false;
+                }
+                return true;
+            },
+            clearSearch: function(){
+                this.searched = null;
+                this.$nextTick(function(){
+                    this.hashChange();
+                });
+            },
+            searchSubmit: function(){
+                if(!this.isPC)
+                {
+                    this.withSummary = false;
+                }
+            },
+            anchorEscaping : function(str){
+                return str.replace(' ', '-').replace('.', '-');
+            },
+            setSearchDisabled : function(value){
+                this.searchDisabled = value;
+            },
+            initComments : function(){
+                
+                    var vue = this;
+                    var theme = {
+                        render : function(state, instance) {
+                            var container = document.createElement('div');
+                            container.lang = "en-US";
+                            container.className = 'gitment-container gitment-root-container';
+                            container.appendChild(instance.renderHeader(state, instance));
+                            container.appendChild(instance.renderComments(state, instance));
+                            container.appendChild(instance.renderEditor(state, instance));
+                            return container;
+                        },
+                    }
+
+                    var gitment = new Gitment({
+                        id : 'catlib-en:v2/helper/str.html',
+                        owner: 'catlib',
+                        repo: 'catlib-en.io',
+                        oauth: {
+                            client_id: '3620f7cdd1c50b4b6e3c',
+                            client_secret: '50664006a799cb29b27e8358b88a6a4580e8dc0c',
+                            cross_server: 'https://31225080.ap-southeast-1.fc.aliyuncs.com/2016-08-15/proxy/gitment/gitment-cross/',
+                        },
+                        labels : [
+                            'CatLib'
+                        ],
+                        link: 'https://catlib.io/v2/helper/str.html',
+                        maintainer: ["yb199478"],
+                        theme : theme,
+                        perPage : 30,
+                    });
+
+                    gitment.render(this.$refs.comments);
+                
+            },
+        },mounted : function() {
+            this.isPC = this.withSummary = this.testPC();
+            this.$nextTick(function(){
+                this.bindScroll();
+                this.bindAnchor();
+                this.hashChange();
+                this.initComments();
+                this.bindMinHeight();
+            });
+        },
+        watch: {
+            searched : function(){
+                $('.cookbook-content').animate({scrollTop:0}, 0);
+            }
+        },
+        computed:{
+            minHeightStyle : function()
+            {
+                return { 'min-height' : this.clientHeight + "px" }
+            }
+        }
+    });
+};
+</script>
+    
+
+    
+    <script src="/scripts/cookbook.js"></script>
+    
+      <script src="/scripts/gitment.js"></script>
+    
+    
+    
+  </body>
+</html>

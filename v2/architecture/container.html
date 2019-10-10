@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="en">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="description" content>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1.0, user-scalable=0">
+
+    
+
+    
+
+    <!-- stylesheets -->
+    <link rel="stylesheet" href="/styles/cookbook.css">
+    <link rel="stylesheet" href="/styles/fontawesome.css">
+    
+      <link rel="stylesheet" href="/styles/gitment.css">
+    
+
+    <!-- favicon -->
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    
+
+    
+
+    
+
+    <title>CatLib - Container </title>
+  </head>
+
+  <body>
+    
+    
+    <div id="cookbook" :class="{'with-summary' : withSummary}" v-cloak>
+    <div class="cookbook-summary">
+    
+    <search placeholder="Type to search" :versions="versions" :root="root" v-model="searched" v-on:submit="searchSubmit" :disable="searchDisabled" v-on:disabled="setSearchDisabled"></search>
+    <navigation :data="navigation" :web="web" :versions="versions" :root="root" active="v2/architecture/container.html" :subnavdata="contentNavigation" :value="contentOffset" :searchdisabled="searchDisabled"></navigation>
+    
+</div>    <div class="cookbook-content" ref="content">
+    
+    <div class="cookbook-header" role="navigation">
+        <header-tool :web="web" path="v2/architecture/container.html" editor v-model="withSummary"></header-tool>
+        <header-navigation :web="web" :versions="versions" :root="root"></header-navigation>
+    </div>
+    <div class="content-wrapper" @click="hidenSummary" :style="minHeightStyle">
+        <checkout :navigation="navigation" :web="web" :versions="versions" v-model="checkout"></checkout>
+        <div v-if="checkout" class="cookbook-search-results">
+            <div id="search-noresults" v-show="searched == null">
+                <section ref="section" class="markdown-section">
+                    <h1 id="Container"><a href="#Container" class="headerlink" title="Container"></a>Container</h1><p>The Container service container is a powerful tool for managing <strong>class’s dependencies</strong> and <strong>execute dependency injections</strong>. The essence is to inject the <strong>constructor</strong> or the <strong>property</strong> marked as <code>[Inject]</code> by reflection.</p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>Almost all service bindings are done in the service provider. If a service is not based on any interface then there is no need to bind it to the container.</p>
+<p>The container does not need to be told how to build the object, because it will automatically parse the concrete object instance using reflection technology.</p>
+<p>In the service provider we can use the <code>Bind</code> or <code>Singleton</code> method to register a service binding.</p>
+<p>[Application] (application.html) inherits from the service container in the CatLib core library.</p>
+<h2 id="Make-Service"><a href="#Make-Service" class="headerlink" title="Make Service"></a>Make Service</h2><p>You can build the service with the <code>Make</code> method. If a container is not used to generate a service that is not bound, the container will attempt to resolve the service that needs to be generated according to the policy. If the attempt fails, an <code>UnresolvableException</code> exception will be thrown.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> foo = app.Make&lt;IFoo&gt;();</span><br></pre></td></tr></table></figure>
+<h4 id="User-custom-parameters"><a href="#User-custom-parameters" class="headerlink" title="User custom parameters"></a>User custom parameters</h4><p>CatLib supports custom parameters when building a service, all you need to do is:</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> foo = app.Make&lt;IFoo&gt;(<span class="string">"params-1"</span>, <span class="string">"params-2"</span>);</span><br></pre></td></tr></table></figure>
+<h2 id="Bind-Service"><a href="#Bind-Service" class="headerlink" title="Bind Service"></a>Bind Service</h2><p>To use the power of the service container you first need to bind the service to the service container. If you don’t bind, then you will not have any services available. These bindings are usually in the <a href="service-provider.html">service provider</a>.</p>
+<p>The binding service is divided into the following two types：</p>
+<ul>
+<li><strong>Bind</strong>: A new instance is generated for each call.</li>
+<li><strong>Singleton</strong>: Each call always returns the same instance.</li>
+</ul>
+<h4 id="Bind"><a href="#Bind" class="headerlink" title="Bind"></a>Bind</h4><p>The <code>Bind</code> method allows the service to be bound as an binding.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.Bind&lt;IFoo, Foo&gt;();</span><br></pre></td></tr></table></figure>
+<p>We bind the <code>IFoo</code> interface to the <code>Foo</code> implementation via the above code. This way you can use the interface to build the service:</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> foo1 = App.Make&lt;IFoo&gt;();</span><br><span class="line"><span class="keyword">var</span> foo2 = App.Make&lt;IFoo&gt;();</span><br><span class="line"><span class="comment">// foo1 != foo2</span></span><br></pre></td></tr></table></figure>
+<h4 id="Singleton"><a href="#Singleton" class="headerlink" title="Singleton"></a>Singleton</h4><p>The service container uses the <code>Singleton</code> method to bind the service to a singleton. Once the singleton binding is built, each call always returns the same instance.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.Singleton&lt;IFoo, Foo&gt;();</span><br></pre></td></tr></table></figure>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> foo1 = app.Make&lt;IFoo&gt;();</span><br><span class="line"><span class="keyword">var</span> foo2 = app.Make&lt;IFoo&gt;();</span><br><span class="line"><span class="comment">// foo1 == foo2</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>Through the combination of <a href="facade.html">facade</a> and service containers, the traditional singleton implementation is subverted, and the traditional singleton mode is implemented in an updated and easier to maintain way.</p>
+</blockquote>
+<h2 id="Try-bind-service"><a href="#Try-bind-service" class="headerlink" title="Try bind service"></a>Try bind service</h2><p>You can use <code>BindIf</code> or <code>SingletonIf</code> to conditionally determine the binding. If the bound service does not exist, then the binding is performed, otherwise no action is taken.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.BindIf&lt;IFoo, Foo&gt;();</span><br></pre></td></tr></table></figure>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.SingletonIf&lt;IFoo, Foo&gt;();</span><br></pre></td></tr></table></figure>
+<h2 id="Indexer"><a href="#Indexer" class="headerlink" title="Indexer"></a>Indexer</h2><p>The service container supports binding of some simple values through an indexer, and the binding by the indexer is always done in the <a href="#bind">Bind Binding</a> mode.</p>
+<h4 id="Bind-with-indexer"><a href="#Bind-with-indexer" class="headerlink" title="Bind with indexer"></a>Bind with indexer</h4><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">container[<span class="string">"foo"</span>] = <span class="string">"bar"</span>;</span><br></pre></td></tr></table></figure>
+<h4 id="Get-instance-with-indexer"><a href="#Get-instance-with-indexer" class="headerlink" title="Get instance with indexer"></a>Get instance with indexer</h4><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> bar = container[<span class="string">"foo"</span>];</span><br></pre></td></tr></table></figure>
+<h2 id="Constructor-injection"><a href="#Constructor-injection" class="headerlink" title="Constructor injection"></a>Constructor injection</h2><p>In your simple <code>Make</code> operation, the service container has performed a series of complex operations on the bound service (service relationship transformation, service construction, service speculation, context processing, dependency injection, service modification, singletonation…), all this is completely transparent and non-perceived to the developer.</p>
+<p>The service container automatically recognizes the parameters in your constructor and injects the appropriate service instance for it. For the injection scheme, please refer to: <a href="#dependency-injection-rule">Dependency Injection Rule</a></p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">CustomizeService</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Service</span>(<span class="params">IFoo foo</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="comment">// foo will be automatically injected.</span></span><br><span class="line">        <span class="comment">// throw UnresolvableException if service not found.</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>In short, you only need to bind the services you develop to the service container, and the service container will automatically handle your service dependencies when you generate the service.</p>
+<blockquote>
+<p>Note that only the constructor is <code>public</code> can be injected</p>
+</blockquote>
+<h2 id="Inject-Attribute"><a href="#Inject-Attribute" class="headerlink" title="Inject Attribute"></a>Inject Attribute</h2><p>The service container uses the <code>InjectAttribute</code> to identify which <strong>property</strong> are allowed to be injected.</p>
+<p>Any property that can be injected must satisfy the following rules:</p>
+<ul>
+<li>The property must mark the <code>[Inject]</code> attribute</li>
+<li>Protpery <code>set</code> field access level is <code>public</code>。</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">CustomizeService</span></span><br><span class="line">&#123;</span><br><span class="line">    [<span class="meta">Inject</span>]</span><br><span class="line">    <span class="keyword">public</span> IFoo Foo &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>You can’t access an instance of the <code>property</code> that is marked as injected in the constructor, because the property inject will be done after the constructor inject, if you access it in the constructor, this will result in a <code>NullReferenceException</code> exception.</p>
+</blockquote>
+<h4 id="Optional-inject"><a href="#Optional-inject" class="headerlink" title="Optional inject"></a>Optional inject</h4><p>Property inject can be used the <code>Required</code> flag indicates that this property is optional.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">CustomizeService</span></span><br><span class="line">&#123;</span><br><span class="line">    [<span class="meta">Inject(Required = false)</span>]</span><br><span class="line">    <span class="keyword">public</span> IFoo Foo &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125; = <span class="keyword">new</span> Foo();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Service-alias"><a href="#Service-alias" class="headerlink" title="Service alias"></a>Service alias</h2><p>The <code>alias</code> is a very important feature of the service container, which provides the ability to bind an interface to a specified implementation.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.Singleton&lt;IFoo, FooBar&gt;();</span><br></pre></td></tr></table></figure>
+<p>Or point multiple interfaces to the same instance.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.Singleton&lt;IFoo, FooBar&gt;().Alias&lt;IBar&gt;();</span><br></pre></td></tr></table></figure>
+<h2 id="Release-singleton-instance"><a href="#Release-singleton-instance" class="headerlink" title="Release singleton instance"></a>Release singleton instance</h2><p>The container allows you to release the <strong>singleton bind instance</strong> that has been generated using the <code>Release</code> method. <a href="#release-event">Release event</a> is triggered after release</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.Release&lt;IFoo&gt;();</span><br></pre></td></tr></table></figure>
+<h4 id="IDisposable-supported"><a href="#IDisposable-supported" class="headerlink" title="IDisposable supported"></a>IDisposable supported</h4><p>For the release of the generated singleton service, it checks if the service implementation implements the <code>IDisposable</code> interface. If the interface is implemented, it will be called automatically.</p>
+<blockquote>
+<p>If the service fails to find it in the container, the <code>Release</code> function will return <code>false</code>.</p>
+</blockquote>
+<h2 id="Unbind"><a href="#Unbind" class="headerlink" title="Unbind"></a>Unbind</h2><p>You can unbind the already bound service with <code>Unbind</code>. If the bound class is singletoned and has been built, then the unbind will automatically release and trigger the [Release event] (#release-event).</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> binder = app.Singleton&lt;IFoo, Foo&gt;();</span><br><span class="line">binder.UnBind();</span><br></pre></td></tr></table></figure>
+<h2 id="Resolving-event"><a href="#Resolving-event" class="headerlink" title="Resolving event"></a>Resolving event</h2><p>The service container trigger the service resolving event each time a new instance is created, which can be listened to using the <code>OnResolving</code> method.</p>
+<p>This event can be used to decorate or parameterize the constructed service and allows you to set additional properties for the service object before it is passed to the developer.</p>
+<p>The resolving event is divided into 2 types. The <strong>local resolving event</strong> will be called in preference than the <strong>global resolving event</strong>. The characteristics of the resolving event are as follows:</p>
+<ul>
+<li>A local resolving event is only triggered when the specified service is built.</li>
+<li>A global resolving event triggers whenever any service is built.</li>
+<li>The resolving event for a singleton service will only trigger once on the first resolving(unless release).</li>
+<li>Setting the service instance with <code>Instance</code> will trigger a service resolving event.</li>
+</ul>
+<h4 id="local-resolving-event"><a href="#local-resolving-event" class="headerlink" title="local resolving event"></a>local resolving event</h4><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">app.Singleton&lt;IFoo, Foo&gt;().OnResolving&lt;Foo&gt;((foo) =&gt;</span><br><span class="line">&#123;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h4 id="global-resolving-event"><a href="#global-resolving-event" class="headerlink" title="global resolving event"></a>global resolving event</h4><ul>
+<li>Decorate for all services</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">app.OnResolving((instance) =&gt;</span><br><span class="line">&#123;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Decorate for specified services</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">app.OnResolving&lt;IFoo&gt;((foo) =&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// decorate for all services that implement the IFoo interface</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h2 id="After-resolving-event"><a href="#After-resolving-event" class="headerlink" title="After resolving event"></a>After resolving event</h2><p>The service container trigger the <strong>after resolving event</strong> after the <strong>service resolving event</strong>. You can listen for the event using the <code>OnAfterResolving</code> method.</p>
+<p>It is useful for programs that need to be verified after the event is resolved.</p>
+<h4 id="local-after-resolving-event"><a href="#local-after-resolving-event" class="headerlink" title="local after resolving event"></a>local after resolving event</h4><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">app.Singleton&lt;IFoo, Foo&gt;().OnAfterResolving&lt;Foo&gt;((foo) =&gt;</span><br><span class="line">&#123;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h4 id="global-after-resolving-event"><a href="#global-after-resolving-event" class="headerlink" title="global after resolving event"></a>global after resolving event</h4><ul>
+<li>Decorate for all services</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">app.OnAfterResolving((instance) =&gt;</span><br><span class="line">&#123;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Decorate for specified services</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">app.OnAfterResolving&lt;IFoo&gt;((foo) =&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// decorate for all services that implement the IFoo interface</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h2 id="Release-event"><a href="#Release-event" class="headerlink" title="Release event"></a>Release event</h2><p>When the container uses the <code>Release</code> method or other release methods (Unbind, Instance, Flush) to release the generated singleton service, a service release event is triggered.</p>
+<p>In the release event, you can perform the final processing of the service (such as: resource release, close the associated service).</p>
+<p>The release event is divided into 2 types, the <strong>local release event</strong> will be called in preference than the <strong>global release event</strong>, and you can listen to the event using the <code>OnRelease</code> method. The following behaviors may trigger a release event:</p>
+<ul>
+<li>A new instance via <code>Instance</code>, and the old instance will be triggered to release the event.</li>
+<li>Use <code>Release</code> to release exists service.</li>
+<li>Unbind the service by <code>Unbind</code>.</li>
+<li>Use <code>Flush</code> to cleanup the container.</li>
+</ul>
+<h4 id="local-release-event"><a href="#local-release-event" class="headerlink" title="local release event"></a>local release event</h4><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">app.Singleton&lt;IFoo, Foo&gt;().OnRelease&lt;Foo&gt;((foo) =&gt;</span><br><span class="line">&#123;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h4 id="global-release-event"><a href="#global-release-event" class="headerlink" title="global release event."></a>global release event.</h4><ul>
+<li>Decorate for all services</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">app.OnRelease((instance) =&gt;</span><br><span class="line">&#123;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Decorate for specified services</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">app.OnRelease&lt;IFoo&gt;((foo) =&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// decorate for all services that implement the IFoo interface</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>This event is not triggered when the service via <a href="#bind">Bind</a>‘s service been released.</p>
+</blockquote>
+<h2 id="Rebound-event"><a href="#Rebound-event" class="headerlink" title="Rebound event"></a>Rebound event</h2><p>When the service implementation changes, a rebound event is triggered. By focusing on this event, the service change can be obtained. The rebound event is valid for both the singleton binding and the instance binding service. The following behaviors will trigger the redefinition event:</p>
+<ul>
+<li>When rebinding a service that has been bound and built.</li>
+<li>Use <code>Instance</code> to change the singleton service implementation that has been built.</li>
+</ul>
+<p>The following behavior will not cause a rebound event:</p>
+<ul>
+<li>Rebound events is not trigged when rebinding a service that has never been built</li>
+<li>When the service instance is released.</li>
+</ul>
+<p>You can listen to the service change through the <code>OnRebound</code> or <code>Watch</code> methods(The Watch method is the OnRebound extension alias method).</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">app.Watch&lt;IFoo&gt;((newInstance)=&gt;</span><br><span class="line">&#123;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<blockquote>
+<ul>
+<li>By rebound events, your program can always be implemented with the latest services.</li>
+<li>The service implementation obtained through <a href="facade.html">Facade</a> is always up to date.</li>
+</ul>
+</blockquote>
+<h2 id="Instance-Singleton"><a href="#Instance-Singleton" class="headerlink" title="Instance(Singleton)"></a>Instance(Singleton)</h2><p>The service container can instantiate your own generated instance via <code>Instance</code>, and then fetching the instance through the container always returns the managed instance.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.Instance(<span class="string">"foo"</span> , <span class="keyword">new</span> Foo());</span><br></pre></td></tr></table></figure>
+<p>Note that if you use <code>Bind</code> for the specified service, then if you try to instantiate this service instance, the service container will throw a <code>LogicException</code> exception:</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">app.Bind(<span class="string">"foo"</span>, (container, userParams)=&gt; <span class="keyword">new</span> Foo());</span><br><span class="line">app.Instance(<span class="string">"foo"</span> , <span class="keyword">new</span> Foo()); <span class="comment">// throw LogicException</span></span><br></pre></td></tr></table></figure>
+<h2 id="Tag-Tagged"><a href="#Tag-Tagged" class="headerlink" title="Tag/Tagged"></a>Tag/Tagged</h2><p>You can group multiple services, which allows you to generate multiple services at once, and service grouping is grouped using <code>Tag</code>.</p>
+<p>This is very useful in some scenarios such as:</p>
+<ul>
+<li>The modules required in the game battlefield can be uniformly loaded and unified release through service grouping.</li>
+<li>Logs will be logged to the file log service and web log service</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Tags</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">const</span> BattleManagerTags = <span class="string">"BattleManagerTags"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Tagged service</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">app.Singleton&lt;IBattleMonster, BattleMonsterManager&gt;()</span><br><span class="line">   .Tag(Tags.BattleManagerTags);</span><br><span class="line">app.Singleton&lt;IBattleMonster, BattleCameraManager&gt;()</span><br><span class="line">   .Tag(Tags.BattleManagerTags);</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Make with tag</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">app.Tagged(Tags.BattleManagerTags); </span><br><span class="line"><span class="comment">// &#123; BattleMonsterManager, BattleCameraManager &#125;</span></span><br></pre></td></tr></table></figure>
+<h4 id="Released"><a href="#Released" class="headerlink" title="Released"></a>Released</h4><p>You can use the <code>Release</code> method to release the tagged objects, which may be very convenient in some scenarios, such as unifying the singleton object of the game battlefield when exiting the game battlefield.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> services = app.Tagged(Tags.BattleManagerTags);</span><br></pre></td></tr></table></figure>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.Release(<span class="keyword">ref</span> services);</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>If any of the services fail to be found from the container, <code>false</code> will be returned, and a service implementation that fails to be found in the container will appear in the <code>ref service</code> variable.</p>
+</blockquote>
+<h2 id="Context-binding"><a href="#Context-binding" class="headerlink" title="Context binding"></a>Context binding</h2><p>Sometimes we may have two different instance using the same interface, but we want to inject different implementations into each service, we can solve this problem through context binding.</p>
+<h4 id="Describe-the-context-by-binding-the-type-name"><a href="#Describe-the-context-by-binding-the-type-name" class="headerlink" title="Describe the context by binding the type name"></a>Describe the context by binding the type name</h4><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">app.Singleton&lt;ScreenshotUpload&gt;()</span><br><span class="line">    .Needs&lt;IDisk&gt;()</span><br><span class="line">    .Given(()=&gt; FileSystem.Disk(<span class="string">"aliyun-oss"</span>))</span><br></pre></td></tr></table></figure>
+<p>When the screenshot upload service requires an abstract disk, the closure is used to provide a disk under the file system manager.</p>
+<h4 id="Describe-the-context-by-binding-the-variable-name"><a href="#Describe-the-context-by-binding-the-variable-name" class="headerlink" title="Describe the context by binding the variable name"></a>Describe the context by binding the variable name</h4><p>The bound variable name must start with <code>$</code> and be sensitive to the case of the variable name.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">app.Singleton&lt;ScreenshotUpload&gt;() </span><br><span class="line">    .Needs(<span class="string">"$disk"</span>)</span><br><span class="line">    .Given(()=&gt; FileSystem.Disk(<span class="string">"aliyun-oss"</span>))</span><br></pre></td></tr></table></figure>
+<p>When building the screenshot upload service, the framework looks up the <code>disk</code> variable in the screenshot upload service constructor and gives it a given implementation.</p>
+<h2 id="Extended-service"><a href="#Extended-service" class="headerlink" title="Extended service"></a>Extended service</h2><p>The service container allows you to modify a singleton service that has already been built with <code>Extend</code> or to create additional grooming for services that have not yet been built.</p>
+<p>If <code>Extend</code> is a service that has already been built, then the extension code will take effect immediately, but will not affect subsequent services (the specified build service is released and then rebuilt).</p>
+<p>If the <code>Extend</code> service is a service that has not yet been built, then the extension will continue to take effect for the specified service built in the future.</p>
+<p>If <code>Extend</code> does not specify a service name, it will take effect globally, as long as the interface, type that meets the specified conditions is triggered.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">app.Extend&lt;IFoo&gt;((foo) =&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> foo;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h2 id="Bind-method"><a href="#Bind-method" class="headerlink" title="Bind method"></a>Bind method</h2><p>In addition to the service container binding, the service container can also perform method(function) binding. You can bind the function through the <code>BindMethod</code> method. The service container will automatically analyze the parameters required by the binding function and provide appropriate parameters. inject parameters.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">app.BindMethod(<span class="string">"foo"</span> , ()=&gt;</span><br><span class="line">&#123;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>If you need to do <a href="#context-binding">context binding</a> for the bound function arguments, you can do this:</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> binder = app.BindMethod(<span class="string">"foo"</span> , (IFileSystem fileSystem) =&gt; &#123; &#125;);</span><br><span class="line">binder.Needs&lt;IFileSystem&gt;.Given(()=&gt; <span class="keyword">new</span> FileSystem());</span><br></pre></td></tr></table></figure>
+<h2 id="Invoke-bind-method"><a href="#Invoke-bind-method" class="headerlink" title="Invoke bind method"></a>Invoke bind method</h2><p>A bound function can be called with the <code>Invoke</code> method. You can pass custom parameters to the called function. These parameters will be injected into the function parameters according to the <a href="#dependency-injection-rule">dependency injection rule</a> of the service container. If the method parameters cannot be solved, then an <code>UnresolvableException</code> exception will be thrown.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.Invoke(<span class="string">"foo"</span>, <span class="comment">/* Your params*/</span>);</span><br></pre></td></tr></table></figure>
+<h2 id="Unbind-bind-method"><a href="#Unbind-bind-method" class="headerlink" title="Unbind bind method"></a>Unbind bind method</h2><p>A binding function can be removed by the <code>UnbindMethod</code> method, which supports the following lifting methods:</p>
+<ul>
+<li>If the argument passed in is a string (<code>string</code>), the function name is removed as a method name.</li>
+<li>If the passed argument is a method bound object (<code>IMethodBind</code>) then the corresponding function is released.</li>
+<li>If the passed argument is another object (<code>object</code>) then the call target, remove all functions based on this call target</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.UnbindMethod(<span class="string">"foo"</span>);</span><br></pre></td></tr></table></figure>
+<h2 id="Call-method-with-dependency-injection"><a href="#Call-method-with-dependency-injection" class="headerlink" title="Call method with dependency injection"></a>Call method with dependency injection</h2><p>The <code>Call</code> method can be used to initiate a dependency injection call to any <code>method</code> or <code>Lambda</code>, and the container will automatically resolve the parameters required by the function according to the <a href="#dependency-injection-rule">dependency injection rule</a>.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">app.Call((IFoo foo) =&gt;</span><br><span class="line">&#123;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h2 id="OnFindType"><a href="#OnFindType" class="headerlink" title="OnFindType"></a>OnFindType</h2><p>When the container attempts to speculate on a service that has not been bound, it will query the <code>Type</code> of the service by traversing the query function registered by <code>OnFindType</code>.</p>
+<p>In general, this usage scenario is mostly used for Type lookups across assemblies.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">app.OnFindType((finder)=&gt; </span><br><span class="line">&#123; </span><br><span class="line">    <span class="keyword">return</span> Type.GetType(finder); </span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>When the generated service relies on <code>OnFindType</code> to infer the service, the service build will use the reflection service of c#, which is a serious loss of performance. So you should use singleton binding instead of relying on speculation to generate it as much as possible.</p>
+</blockquote>
+<h2 id="Variant"><a href="#Variant" class="headerlink" title="Variant"></a>Variant</h2><p>Classes marked with the <code>VariantAttribute</code> attribute will be considered by the container to be mutable, and the mutable type allows the container to convert the underlying type parameters passed in by the developer to a mutable type.</p>
+<p>The default base type parameter is: <code>Boolean</code>,<code>Byte</code>,<code>SByte</code>,<code>Int16</code>,<code>Int32</code>,<code>UInt32</code>,<code>Int64</code>,<code>IntPtr</code>,<code>UIntPtr</code>,<code>Char</code>,<code>Double</code>,<code>Single</code>,<code>String</code>.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[<span class="meta">Variant</span>]</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">ItemModel</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">string</span> itemName;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ItemModel</span>(<span class="params"><span class="keyword">int</span> itemId</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">this</span>.itemName = (itemId == <span class="number">10</span>) ? <span class="string">"dress"</span> : <span class="string">"headwear"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">ItemUI</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ItemUI</span>(<span class="params"><span class="keyword">string</span> name, ItemModel model</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="comment">// name : foo</span></span><br><span class="line">        <span class="comment">// model.itemName : dress</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.Make&lt;ItemUI&gt;(<span class="string">"foo"</span>, <span class="number">10</span>);</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>With variable types, you can hide cumbersome conversions and the framework will automatically convert between types.</p>
+</blockquote>
+<h2 id="IConvertible"><a href="#IConvertible" class="headerlink" title="IConvertible"></a>IConvertible</h2><p>The service container supports conversions for implementing the <code>IConvertible</code> interface object.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Foo</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Foo</span>(<span class="params"><span class="keyword">string</span> bar</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="comment">// bar : 100</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.Make&lt;Foo&gt;(<span class="number">100</span>);</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>The framework will prioritize the conversion of the variable type, ie if the variable type conversion is possible, the variable type conversion will be used first.</p>
+</blockquote>
+<h2 id="Flush-the-container"><a href="#Flush-the-container" class="headerlink" title="Flush the container"></a>Flush the container</h2><p>You can use <code>Flush</code> to reset the service container, clear all the data in the service container, and restore to the initial state.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.Flush();</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>In the process of Flush resetting the container, if it is a singleton service, a [service release event] (#release-event) will be trigged.</p>
+</blockquote>
+<h2 id="Parameter-table-parameter-matcher"><a href="#Parameter-table-parameter-matcher" class="headerlink" title="Parameter table/parameter matcher"></a>Parameter table/parameter matcher</h2><p>The service container allows the developer to pass in the parameter list to match the parameters of the dependency injection. If you need to use the parameter table, you need to provide the data structure that implements the <code>IParams</code> interface in the <code>Make</code> service.</p>
+<p>The framework already provides the default parameter table structure: <code>Params</code>, the default parameter table is matched according to <code>variable name</code> and is case sensitive.</p>
+<ul>
+<li>The parameter table trigger order is the order of the parameter tables passed in.</li>
+<li>The matching of the parameter table is the highest priority.</li>
+<li>The parameter type provided by the parameter table will try to perform parameter type conversion if it is inconsistent with the injection parameter type. If the conversion fails, it will use [dependency injection rule] (#dependency-injection-rule).</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Foo</span> : <span class="title">IFoo</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Foo</span>(<span class="params">IBar bar</span>)</span></span><br><span class="line"><span class="function"></span>    &#123; </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">app.Make&lt;Foo&gt;(<span class="keyword">new</span> Params()</span><br><span class="line">&#123;</span><br><span class="line">    &#123; <span class="string">"bar"</span> , <span class="keyword">new</span> Bar() &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h2 id="Tightening-parameter-injection"><a href="#Tightening-parameter-injection" class="headerlink" title="Tightening parameter injection"></a>Tightening parameter injection</h2><p>The service container allows all parameters passed in by the user to be accepted at once by the special type <code>object</code> or <code>object[]</code>.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Foo</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Foo</span>(<span class="params"><span class="keyword">object</span>[] args</span>)</span></span><br><span class="line"><span class="function"></span>    &#123; </span><br><span class="line">        <span class="comment">// args[0] == 1</span></span><br><span class="line">        <span class="comment">// args[1] == "foo"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">App.Make&lt;Foo&gt;(<span class="number">1</span>, <span class="string">"foo"</span>);</span><br></pre></td></tr></table></figure>
+<p>If the receive type is <code>object</code> and the number of arguments passed is 1, then the argument will be automatically deconstructed, otherwise it will be an array of <code>object[]</code>.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Foo</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Foo</span>(<span class="params"><span class="keyword">object</span> arg</span>)</span></span><br><span class="line"><span class="function"></span>    &#123; </span><br><span class="line">        <span class="comment">// arg == "str"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">App.Make&lt;Foo&gt;(<span class="string">"str"</span>);</span><br></pre></td></tr></table></figure>
+<h2 id="Dependency-injection-rule"><a href="#Dependency-injection-rule" class="headerlink" title="Dependency injection rule"></a>Dependency injection rule</h2><ul>
+<li><strong>Execution constructor injection</strong></li>
+<li>If the implementation is built through a closure, the implementation is immediately built through the closure and jumps to: <code>Execution of the instance&#39;s feature injection</code> to continue execution.</li>
+<li>Traverse the parameter list:<br>– <strong>Get the parameters that can be used for injection by parameter matcher</strong><br>—– The default matcher matches a parameter name with an incoming match table to return a valid result.<br>– <strong>Check if the austerity injection parameter (<code>object</code> or <code>object[]</code>), and can do austerity injection:</strong><br>—– Yes: Inject the parameters passed in by the user tightly, and clear the parameters passed in by the user.<br>– <strong>Pick and pop the appropriate parameters from the parameters passed in by the remaining users.</strong><br>– Use a dependency injection container for analysis:<br>—– <strong>If it is: class, interface injection:</strong><br>——— Build with context closures<br>————- Pass the required interface name (class name), and build it if there is a closure.<br>————- Pass in the parameter variable name and build it if there is a closure.<br>——— Build by context service name<br>————- The incoming request interface name (class name), if there is a context service name, is built using the context service name.<br>————- Incoming parameter variable name, if there is a context service name, it is built using the context service name.<br>——— Build by the required interface name (class name).<br>——— Check if the default value can be used, if it can be used, return it with the default value.<br>——— If both fail: throw an <code>UnresolvableException</code> exception<br>—– <strong>If it is a basic type injection:</strong><br>——— Build with context closures<br>————- Pass the required interface name (class name), and build it if there is a closure.<br>————- Pass in the parameter variable name and build it if there is a closure.<br>——— Build by context service name<br>————- The incoming request interface name (class name), if there is a context service name, is built using the context service name.<br>————- Incoming parameter variable name, if there is a context service name, it is built using the context service name.<br>——— Build by the required interface name (class name).<br>——— Check if the default value can be used, if it can be used, return it with the default value.<br>——— If both fail: throw an <code>UnresolvableException</code> exception</li>
+<li><strong>Feature injection of the execution instance</strong></li>
+<li>Traverse the parameter list:<br>– <strong>Check readable and writable status, skip it when not</strong><br>– Use a dependency injection container for analysis:<br>—– <strong>If it is: class, interface injection:</strong><br>——— Build with context closures<br>————- Pass the required interface name (class name), and build it if there is a closure.<br>————- Pass in the property name and build it if there is a closure.<br>——— Build by context service name<br>————- The incoming request interface name (class name), if there is a context service name, is built using the context service name.<br>————- Pass in the property name, if there is a context service name, build with the context service name.<br>——— Build by the required interface name (class name).<br>——— If both fail: throw an <code>UnresolvableException</code> exception<br>—– <strong>If it is a basic type injection:</strong><br>——— Build with context closures<br>————- Pass the required interface name (class name), and build it if there is a closure.<br>————- Pass in the property name and build it if there is a closure.<br>——— Build by context service name<br>————- The incoming request interface name (class name), if there is a context service name, is built using the context service name.<br>————- Pass in the property name, if there is a context service name, build with the context service name.<br>——— Build by the required interface name (class name).<br>——— If both fail: throw an <code>UnresolvableException</code> exception</li>
+<li>Injection completed</li>
+</ul>
+<h2 id="Other-Method"><a href="#Other-Method" class="headerlink" title="Other Method"></a>Other Method</h2><ul>
+<li><strong>Type2Service(type)</strong> convert type to service name</li>
+<li><strong>GetBind(service)</strong> Get the binding data of the service, or null if the binding does not exist</li>
+<li><strong>HasBind(service)</strong> Is the service already bound?</li>
+<li><strong>HasInstance(service)</strong> : Is there a single instance?</li>
+<li><strong>IsResolved(service)</strong> : Has the service been resolved?</li>
+<li><strong>CanMake(service)</strong> Can I generate a service?</li>
+<li><strong>IsStatic(service)</strong> Whether the service is singletoned or false if the service does not exist</li>
+<li><strong>IsAlias(service)</strong> Is the service name an alias?</li>
+<li><strong>BindIf(service, concrete)</strong> Bind when the service does not exist (instance binding)</li>
+<li><strong>SingletonIf(service, concrete)</strong> Bind when the service does not exist (singleton binding)</li>
+<li><strong>Wrap(lambda,params)</strong> wraps a method that can be called in a dependency injection form</li>
+<li><strong>Factory(service)</strong> wraps a method that triggers the ability to get the specified service</li>
+</ul>
+<h2 id="Container-behavior-customization"><a href="#Container-behavior-customization" class="headerlink" title="Container behavior customization"></a>Container behavior customization</h2><p>When developers need to deeply customize container behavior, you can refactor the virtual methods provided below to adjust the container default behavior. Container behavior customization can only be done if you have a good understanding of the behavior of virtual functions.</p>
+<ul>
+<li><strong>Build</strong>: Build a service instance</li>
+<li><strong>IsBasicType</strong>: Is it the default base type (by default: primitive type + string)</li>
+<li><strong>IsUnableType</strong>: Is it a type that cannot be built?</li>
+<li><strong>WrapperTypeBuilder</strong>: wraps a type that can be used to generate a service</li>
+<li><strong>GetDependenciesFromUserParams</strong>: Get the appropriate parameters from the parameters passed in by the user for injection.</li>
+<li><strong>ChangeType</strong>: Convert type to the specified type.</li>
+<li><strong>GetPropertyNeedsService</strong>: Pass in a property selector object (<code>PropertyInfo</code>) to get the service name of the corresponding object.</li>
+<li><strong>GetParamNeedsService</strong>: Pass in a parameter object (<code>ParameterInfo</code>) to get the service name of the corresponding parameter requirement</li>
+<li><strong>ResolveAttrPrimitive</strong>: When resolving the underlying type of the property selector, the return value is the service instance of the requirement.</li>
+<li><strong>ResloveAttrClass</strong>: When the property selector class or interface type is resolved, the return value is the service instance of the requirement.</li>
+<li><strong>ResolvePrimitive</strong>: When solving the underlying type of the constructor, the return value is the service instance of the requirement.</li>
+<li><strong>ResloveClass</strong>: When solving the class or interface type of the constructor, the return value is the service instance of the requirement.</li>
+<li><strong>SpeculationServiceByParamName</strong>: Infer the service based on a parameter information. The return value is the service instance of the requirement.</li>
+<li><strong>GetBuildStackDebugMessage</strong>: Get debug information for the compiled stack.</li>
+<li><strong>MakeBuildFaildException</strong>: Build an exception that failed to compile.</li>
+<li><strong>MakeUnresolvablePrimitiveException</strong>: Build an exception that failed to resolve the underlying parameters.</li>
+<li><strong>MakeCircularDependencyException</strong>: Build a circular dependency exception.</li>
+<li><strong>FormatService</strong>: Format (standardized) service name.</li>
+<li><strong>CanInject</strong>: Check if the instance can be injected.</li>
+<li><strong>GuardUserParamsCount</strong>: Limits the number of parameters passed in by the user.</li>
+<li><strong>GuardResolveInstance</strong>: Limits the valid conditions for resolving instances.</li>
+<li><strong>SpeculatedServiceType</strong>: Predict the specified service type based on the service name.</li>
+<li><strong>AttributeInject</strong>: Attribute injection for the specified instance.</li>
+<li><strong>CheckCompactInjectUserParams</strong>: Checks if the parameters passed in by the user can be condensed.</li>
+<li><strong>GetParamsMatcher</strong>: Get a parameter matcher, the valid result matched by the parameter matcher will be the optimal parameter value.</li>
+<li><strong>GetCompactInjectUserParams</strong>: Get the user parameters for the compact injection.</li>
+<li><strong>GetDependencies</strong>: Get the dependency injection result of the specified parameter list.</li>
+<li><strong>GetConstructorsInjectParams</strong>: Select a suitable constructor and get the parameters that specify the injection.</li>
+<li><strong>GuardMethodName</strong>: Verify that the function method name is valid.</li>
+<li><strong>GuardServiceName</strong>: Verify that the function service name is valid.</li>
+<li><strong>GuardConstruct</strong>: Verify that the current state is allowed to build the service (or call the function).</li>
+<li><strong>CreateInstance</strong>: Creates an implementation of the specified type through reflection.</li>
+<li><strong>GetContextualClosure</strong>: Get the closure of the requirement based on the context.</li>
+<li><strong>MakeFromContextualClosure</strong>: Build an instance of the requirement based on the context closure.</li>
+<li><strong>GetContextualService</strong>: Get the service name of the requirement according to the context</li>
+<li><strong>MakeFromContextualService</strong>: Generates a service instance based on the context requirement service name.</li>
+<li><strong>ResloveFromContextual</strong>: Resolve the service implementation through context.</li>
+<li><strong>MakeEmptyBindData</strong>: Make an empty binding data.</li>
+</ul>
+
+                </section>
+
+                
+                    <div ref="comments" id="gitment-container"></div>
+                
+                
+                <support :web="web" visiable></support>
+            </div>
+            <div v-if="searched != null" id="search-result" class="search-result" v-cloak>
+                <p v-if="searched.results.length > 0" class="search-title">
+                    与"{{ searched.keyword }}"相关的内容{{searched.results.length}}条
+                </p>
+                <p v-else class="search-title">无搜索结果可以匹配"{{ searched.keyword }}"</p>
+                <div v-for="(record) in searched.results" class="searched-line">
+                    <h3>
+                        <a :href="'/' + record.href + '#!' + encodeURI(anchorEscaping(record.hash))" @click="clearSearch">
+                            {{ record.hash }}
+                        </a>
+                    </h3>
+                    <ul>
+                        <li><i>{{ record.page }} <span v-if="record.page_title != ''">- {{ record.page_title }}</span></i> <i>score:<span>{{ record.score }}</span></i></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div></div>
+
+<script>
+window.onload = function(){  
+    new Vue({
+        el : '#cookbook',
+        data: { 
+            navigation : {"navigation":[{"levels":[{"text":"CatLib","href":"/"},{"text":"Core","href":"index.html"}]},{"divider":true},{"text":"Getting Started"},{"text":"Introduction","href":"index.html"},{"text":"Code style","href":"style.html"},{"text":"FAQ","href":"faq.html"},{"text":"Contribution","href":"contribution.html"},{"text":"Upgrade","href":"upgrade.html"},{"text":"Migration","href":"migration.html"},{"text":"Architecture"},{"text":"Service Provider","href":"architecture/service-provider.html"},{"text":"Application","href":"architecture/application.html"},{"text":"Container","href":"architecture/container.html"},{"text":"Facade","href":"architecture/facade.html"},{"text":"Components"},{"text":"Event Dispatcher","href":"components/event-dispatcher.html"},{"text":"Helper"},{"text":"Arr","href":"helper/arr.html"},{"text":"Str","href":"helper/str.html"},{"text":"Guard","href":"helper/guard.html"},{"text":"Data Structure"},{"text":"Sort Set","href":"data-structure/sort-set.html"},{"divider":true},{"text":"Power by CatLib","href":"https://github.com/CatLib","external":true}]},
+            web : {"navigation":[{"type":"versions","mobile":true},{"type":"normal","text":"中文文档","href":"https://cn.catlib.io/lasted/index.html"},{"type":"icon","fontawesome":"github","href":"https://github.com/CatLib/Core","mobile":true}],"tool":{"editor":{"text":"Edit","href":"https://github.com/CatLib/catlib-en.io/tree/2.0/","external":true}},"support":{"label":["Not find want the document?","Try searching in the search bar on the left, or {text}"],"text":"question in GitHub","href":"https://github.com/CatLib/catlib-en.io/issues","external":true}},
+            versions: {
+                current :  {"test":"^v2\\/","name":"v2.0","active":"Latest(v2.0)","data":"v2"},
+                list: [{"test":"^v2\\/","name":"v2.0","active":"Latest(v2.0)","data":"v2"}]
+            },
+            withSummary : true,
+            isPC : null,
+            checkout: false,
+            root: "/",
+            contentNavigation: [],
+            contentOffset : { 'offsetTop' : 0, 'height' : 0 },
+            searched: null,
+            searchDisabled: localStorage.getItem("search-input-disabled") == 'true',
+            clientHeight : 0
+        },
+        methods :{
+            testPC : function(){ 
+                var userAgentInfo = navigator.userAgent;
+                var deviceReg = [
+                    /(MI(\s+)|2013022|2013023|HM|2014011|2014501|2014813|2014811|2014812|2014817|2014818|2014819|2014502|2015|xiaomi).*/i,
+                    /(MI(.*|\s*)PAD).*/i,
+                    /(iPhone | iPod).*/i,
+                    /(iPad).*/i,
+                    /(Android).*/i,
+                    /(iPhone|iPad|iPod|iOS).*/i,
+                    /(windows(.*|\s*)phone).*/i
+                ];
+                var flag = true;
+                for (var v = 0; v < deviceReg.length; v++) {
+                    if (deviceReg[v].test(userAgentInfo)) {
+                        flag = false;
+                        break;
+                    }
+                }
+                
+                return flag;
+            },
+            hidenSummary : function(){
+                if(!this.isPC)
+                {
+                    this.withSummary = false;
+                }
+            },
+            bindMinHeight: function(){
+                var vue = this;
+                window.addEventListener("resize", function(){
+                    vue.clientHeight = document.documentElement.clientHeight - 50;
+                }, false);
+                this.clientHeight = document.documentElement.clientHeight - 50;
+            },
+            bindAnchor : function(){
+                if(this.$refs.section == undefined){
+                    return;
+                }
+                window.addEventListener("hashchange", this.hashChange, false);
+                window.addEventListener("resize", this.refreshContentNavigation, false);
+                var elements = this.$refs.section.getElementsByTagName("a");
+                var vue = this;
+                for(var index = 0; index < elements.length; index++){
+                    let element = elements[index];
+                    let href = element.getAttribute("href");
+                    if(href.length <= 0 || href[0] != "#"){
+                        continue;
+                    }
+
+                    element.addEventListener('click', function(event){
+                        location.hash = "!" + encodeURI(decodeURI(vue.anchorEscaping(element.hash.substring(1))));
+                        event.preventDefault();
+                    }, false);
+                }
+
+                this.refreshContentNavigation();
+            },
+            refreshContentNavigation : function(){
+                if(this.$refs.section == undefined || !this.supportSubnav()){
+                    return;
+                }
+                var subnavIndex = 0;
+                var elements = this.$refs.section.getElementsByClassName("headerlink");
+                var subnav = [];
+                for(var index=0; index < elements.length; index++){
+                    var element = elements[index];
+                    if(element.parentElement.nodeName == "H2"){
+                        subnav[subnavIndex++] = {'text' : element.title , 'hash' : "!" + element.hash.substring(1), 'offsetTop' : element.offsetTop};
+                    }
+                }
+                this.contentNavigation = subnav;
+            },
+            hashChange : function(){
+                var locationHash = location.hash.replace(/^#!/ig, "#");
+                if(locationHash == ''){
+                    return;
+                }
+                locationHash = decodeURI(locationHash);
+                var hashes = this.$refs.section.getElementsByClassName("headerlink");
+                var target = null;
+                for(var index=0; index < hashes.length; index++){
+                    var hash = hashes[index];
+                    if(decodeURI(hash.hash) == locationHash){
+                        target = hash;
+                        break;
+                    }
+                }
+                
+                if(target == null){
+                    return;
+                }
+
+                var top = target.offsetTop - 20; 
+                
+                if(top > 0)
+                {
+                    var vue = this;
+                    $('.cookbook-content').animate({scrollTop:top}, 500, function(){
+                        if(!vue.isPC){
+                            vue.withSummary = false;
+                        }
+                    });
+                }        
+            },
+            bindScroll : function(){
+                if(!this.supportSubnav()){
+                    return;
+                }
+                this.$refs.content.addEventListener("scroll", this.scrollChange, false);
+            },
+            scrollChange : function(e){
+                this.contentOffset = { 
+                    'offsetTop' : this.$refs.content.scrollTop,
+                    'height' : this.$refs.content.scrollHeight - this.$refs.content.offsetHeight
+                };
+            },
+            supportSubnav : function(){
+                if(this.navigation.subnav != undefined && this.navigation.subnav == false){
+                    return false;
+                }
+                return true;
+            },
+            clearSearch: function(){
+                this.searched = null;
+                this.$nextTick(function(){
+                    this.hashChange();
+                });
+            },
+            searchSubmit: function(){
+                if(!this.isPC)
+                {
+                    this.withSummary = false;
+                }
+            },
+            anchorEscaping : function(str){
+                return str.replace(' ', '-').replace('.', '-');
+            },
+            setSearchDisabled : function(value){
+                this.searchDisabled = value;
+            },
+            initComments : function(){
+                
+                    var vue = this;
+                    var theme = {
+                        render : function(state, instance) {
+                            var container = document.createElement('div');
+                            container.lang = "en-US";
+                            container.className = 'gitment-container gitment-root-container';
+                            container.appendChild(instance.renderHeader(state, instance));
+                            container.appendChild(instance.renderComments(state, instance));
+                            container.appendChild(instance.renderEditor(state, instance));
+                            return container;
+                        },
+                    }
+
+                    var gitment = new Gitment({
+                        id : 'catlib-en:v2/architecture/container.html',
+                        owner: 'catlib',
+                        repo: 'catlib-en.io',
+                        oauth: {
+                            client_id: '3620f7cdd1c50b4b6e3c',
+                            client_secret: '50664006a799cb29b27e8358b88a6a4580e8dc0c',
+                            cross_server: 'https://31225080.ap-southeast-1.fc.aliyuncs.com/2016-08-15/proxy/gitment/gitment-cross/',
+                        },
+                        labels : [
+                            'CatLib'
+                        ],
+                        link: 'https://catlib.io/v2/architecture/container.html',
+                        maintainer: ["yb199478"],
+                        theme : theme,
+                        perPage : 30,
+                    });
+
+                    gitment.render(this.$refs.comments);
+                
+            },
+        },mounted : function() {
+            this.isPC = this.withSummary = this.testPC();
+            this.$nextTick(function(){
+                this.bindScroll();
+                this.bindAnchor();
+                this.hashChange();
+                this.initComments();
+                this.bindMinHeight();
+            });
+        },
+        watch: {
+            searched : function(){
+                $('.cookbook-content').animate({scrollTop:0}, 0);
+            }
+        },
+        computed:{
+            minHeightStyle : function()
+            {
+                return { 'min-height' : this.clientHeight + "px" }
+            }
+        }
+    });
+};
+</script>
+    
+
+    
+    <script src="/scripts/cookbook.js"></script>
+    
+      <script src="/scripts/gitment.js"></script>
+    
+    
+    
+  </body>
+</html>
